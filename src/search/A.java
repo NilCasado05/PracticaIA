@@ -15,31 +15,27 @@ public class A {
         this.heuristica = h;
     }
 
-    public Resultat buscar(Estat inici, Estat fi){
+    // A* té en compte el cost que ja ha recorregut 
+    // i el que estima que falta
+
+    public Resultat buscar(Estat inici, Estat objectiu){
 
         PriorityQueue<Node> open =
                 new PriorityQueue<>(Comparator.comparingDouble(n -> n.f));
 
         Set<Estat> closed = new HashSet<>();
 
+        Node start = new Node(inici,null,0,heuristica.calcular(inici,objectiu));
+        open.add(start);
+
         int estatsTractats = 0;
-
-        Node nodeInicial =
-                new Node(inici,null,0,heuristica.calcular(inici,fi));
-
-        open.add(nodeInicial);
 
         while(!open.isEmpty()){
 
             Node actual = open.poll();
-
-            if(closed.contains(actual.estat))
-                continue;
-
-            closed.add(actual.estat);
             estatsTractats++;
 
-            if(actual.estat.equals(fi)){
+            if(actual.estat.equals(objectiu)){
 
                 List<Node> cami = reconstruirCami(actual);
 
@@ -51,18 +47,19 @@ public class A {
                 );
             }
 
-            for(Estat successor : mapa.getVeins(actual.estat)){
+            closed.add(actual.estat);
 
-                if(successor.tipus.equals("X"))
+            for(Estat vei : mapa.getVeins(actual.estat)){
+
+                if(closed.contains(vei))
                     continue;
 
-                double cost = calcularCost(actual.estat,successor);
+                double cost = costCarretera(actual.estat.tipus,vei.tipus);
 
                 double g = actual.g + cost;
+                double h = heuristica.calcular(vei,objectiu);
 
-                double h = heuristica.calcular(successor,fi);
-
-                Node fill = new Node(successor,actual,g,h);
+                Node fill = new Node(vei,actual,g,h);
 
                 open.add(fill);
             }
@@ -71,15 +68,15 @@ public class A {
         return null;
     }
 
-    private double calcularCost(Estat a, Estat b){
+    private double costCarretera(TipusCarretera a, TipusCarretera b){
 
         double cost = 0;
 
-        if(b.tipus.equals('A')) cost = 0.5;
-        if(b.tipus.equals('N')) cost = 1;
-        if(b.tipus.equals('C')) cost = 2;
+        if(b == TipusCarretera.AUTOVIA) cost = 0.5;
+        if(b == TipusCarretera.NACIONAL) cost = 1;
+        if(b == TipusCarretera.COMARCAL) cost = 2;
 
-        if(a.tipus != b.tipus)
+        if(a != b)
             cost += 3;
 
         return cost;

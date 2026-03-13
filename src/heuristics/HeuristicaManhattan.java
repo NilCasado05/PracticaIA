@@ -4,6 +4,9 @@ import model.*;
 
 public class HeuristicaManhattan implements Heuristica{
 
+    // Calcula la distància en línia recta sobre la graella, 
+    // sense tenir en compte obstacles ni tipus de carretera
+
     public double calcular(Estat a, Estat b){
 
         int dx = Math.abs(a.x - b.x);

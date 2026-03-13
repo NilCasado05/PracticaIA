@@ -38,7 +38,7 @@ public class LectorMapa {
                             fila[i] = TipusCarretera.COMARCAL;
                             break;
 
-                        default:
+                        case "X":
                             fila[i] = TipusCarretera.BLOQUEJAT;
                     }
                 }
