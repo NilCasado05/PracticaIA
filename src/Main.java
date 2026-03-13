@@ -1,100 +1,98 @@
-import java.io.IOException;
-import java.util.*;
+import java.util.Scanner;
+
+import model.*;
+import search.*;
+import heuristics.*;
+import lector.*;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        try {
+        Scanner sc = new Scanner(System.in);
 
-            Mapa mapa = new Mapa("src/mapa.txt");
+        Mapa mapa = LectorMapa.llegir("mapa.txt");
 
-            // Coordenades automàtiques (mai més error d'índex)
-            int ultimaFila = mapa.getFiles() - 1;
-            int ultimaColumna = mapa.getColumnes() - 1;
+        int amplada = mapa.getAmplada();
+        int altura = mapa.getAltura();
 
-            Estat inici = new Estat(0, 0, mapa.getTipus(0, 0));
-            Estat fi = new Estat(ultimaFila, ultimaColumna,
-                                 mapa.getTipus(ultimaFila, ultimaColumna));
+        Estat inici = new Estat(0,0,mapa.getTipus(0,0));
+        Estat finalEstat = new Estat(amplada-1,altura-1,mapa.getTipus(amplada-1,altura-1));
 
-            System.out.println("===== A* amb H1 =====");
-            executarAStar(mapa, inici, fi);
+        // ----------- TRIAR ALGORITME -----------
 
-        } catch (IOException e) {
-            System.out.println("Error carregant el mapa: " + e.getMessage());
-        }
-    }
+        System.out.println("[ -- Selecciona algoritme -- ]");
+        System.out.println("[ 1 ] - A*");
+        System.out.println("[ 2 ] - Best First");
 
-    // =============================
-    // A* SIMPLE I FUNCIONAL
-    // =============================
-    public static void executarAStar(Mapa mapa, Estat inici, Estat fi) {
+        int alg = sc.nextInt();
 
-        PriorityQueue<Estat> oberts =
-                new PriorityQueue<>(Comparator.comparingDouble(Estat::f));
+        // ----------- TRIAR HEURISTICA -----------
 
-        Set<String> tancats = new HashSet<>();
-        int estatsTractats = 0;
+        System.out.println("[ -- Selecciona heuristica -- ]");
+        System.out.println("[ 1 ] Manhattan");
+        System.out.println("[ 2 ] Mitjana");
+        System.out.println("[ 3 ] Canvi carretera");
 
-        inici.g = 0;
-        inici.h = Heuristiques.h1(inici, fi);
+        int heur = sc.nextInt();
 
-        oberts.add(inici);
+        Heuristica h = null;
+        String heuristicaNom = "";
 
-        while (!oberts.isEmpty()) {
+        switch(heur){
 
-            Estat actual = oberts.poll();
-            estatsTractats++;
+            case 1:
+                h = new HeuristicaManhattan();
+                heuristicaNom = "Manhattan";
+                break;
 
-            if (actual.x == fi.x && actual.y == fi.y) {
-                imprimirResultat(actual, estatsTractats);
+            case 2:
+                h = new HeuristicaMitjana();
+                heuristicaNom = "Mitjana";
+                break;
+
+            case 3:
+                h = new HeuristicaCanviCarretera();
+                heuristicaNom = "CanviCarretera";
+                break;
+
+            default:
+                System.out.println("Heuristica no valida");
+                sc.close();
                 return;
-            }
-
-            tancats.add(actual.x + "," + actual.y);
-
-            for (Estat s : mapa.successors(actual)) {
-
-                String clau = s.x + "," + s.y;
-
-                if (!tancats.contains(clau)) {
-
-                    double cost = actual.g + s.tipus.getCost();
-
-                    if (actual.tipus != s.tipus)
-                        cost += 3;
-
-                    s.g = cost;
-                    s.h = Heuristiques.h1(s, fi);
-                    s.pare = actual;
-
-                    oberts.add(s);
-                }
-            }
         }
 
-        System.out.println("No hi ha solució.");
-    }
+        Resultat r = null;
+        String metodeNom = "";
 
-    // =============================
-    // IMPRIMIR RESULTAT
-    // =============================
-    public static void imprimirResultat(Estat fi, int estatsTractats) {
+        if(alg == 1){
 
-        List<Estat> cami = new ArrayList<>();
+            metodeNom = "A*";
+            A astar = new A(mapa,h);
+            r = astar.buscar(inici,finalEstat);
 
-        while (fi != null) {
-            cami.add(fi);
-            fi = fi.pare;
+        }
+        else if(alg == 2){
+
+            metodeNom = "BestFirst";
+            BestFirst bf = new BestFirst(mapa,h);
+            r = bf.buscar(inici,finalEstat);
+
+        }
+        else{
+
+            System.out.println("Algoritme no valid");
+            sc.close();
+            return;
         }
 
-        Collections.reverse(cami);
+        if(r != null){
+            r.mostrar(metodeNom,heuristicaNom);
+        }
+        else{
+            System.out.println("No s'ha trobat cami");
+        }
 
-        System.out.println("Camí trobat:");
-        for (Estat e : cami)
-            System.out.print(e + " ");
-
-        System.out.println("\nCost total: " + cami.get(cami.size() - 1).g);
-        System.out.println("Estats tractats: " + estatsTractats);
+        sc.close();
     }
 }
