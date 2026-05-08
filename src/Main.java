@@ -11,7 +11,29 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
 
-        Mapa mapa = LectorMapa.llegir("mapa.txt");
+        // ----------- TRIAR MAPA -----------
+
+        System.out.println("[ -- Selecciona mapa -- ]");
+        System.out.println("[ 1 ] - mapa.txt");
+        System.out.println("[ 2 ] - mapa2.txt");
+
+        int mapaSel = sc.nextInt();
+
+        String nomFitxer = "";
+
+        if(mapaSel == 1){
+            nomFitxer = "mapa.txt";
+        }
+        else if(mapaSel == 2){
+            nomFitxer = "mapa2.txt";
+        }
+        else{
+            System.out.println("Mapa no valid");
+            sc.close();
+            return;
+        }
+
+        Mapa mapa = LectorMapa.llegir(nomFitxer);
 
         int amplada = mapa.getAmplada();
         int altura = mapa.getAltura();

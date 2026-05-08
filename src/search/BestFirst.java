@@ -20,8 +20,7 @@ public class BestFirst {
 
     public Resultat buscar(Estat inici, Estat objectiu){
 
-        PriorityQueue<Node> open =
-                new PriorityQueue<>(Comparator.comparingDouble(n -> n.h));
+        PriorityQueue<Node> open = new PriorityQueue<>(Comparator.comparingDouble(n -> n.h));
 
         Set<Estat> closed = new HashSet<>();
 
