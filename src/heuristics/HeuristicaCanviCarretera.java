@@ -1,20 +1,18 @@
 package heuristics;
 
 import model.*;
-import search.A;
 
-public class HeuristicaCanviCarretera implements Heuristica{
+public class HeuristicaCanviCarretera implements Heuristica {
 
-    // A més de la distància, considera que canviar de 
-    // tipus de carretera té cost extra
+    @Override
+    public double calcular(Estat a, Estat b, Mapa mapa) {
 
-    public double calcular(Estat a, Estat b){
+        // Si el tipus de carretera és diferent, penalitzem
+        if(a.tipus != b.tipus){
+            return 3;   // Penalització per canvi de carretera
+        }
 
-        int dx = Math.abs(a.x - b.x);
-        int dy = Math.abs(a.y - b.y);
-
-        double dist = dx + dy;
-
-        return dist * a.tipus.cost + 3;
+        // Si és el mateix tipus, cap penalització
+        return 0;
     }
 }

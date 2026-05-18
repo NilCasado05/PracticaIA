@@ -2,16 +2,15 @@ package heuristics;
 
 import model.*;
 
-public class HeuristicaManhattan implements Heuristica{
+public class HeuristicaManhattan implements Heuristica {
 
-    // Calcula la distància en línia recta sobre la graella, 
-    // sense tenir en compte obstacles ni tipus de carretera
+    @Override
+    public double calcular(Estat a, Estat b, Mapa mapa) {
 
-    public double calcular(Estat a, Estat b){
-
+        // Distància Manhattan entre els dos punts
         int dx = Math.abs(a.x - b.x);
         int dy = Math.abs(a.y - b.y);
 
-        return (dx + dy) * 0.5;
+        return dx + dy;
     }
 }

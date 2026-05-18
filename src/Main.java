@@ -53,7 +53,7 @@ public class Main {
 
         System.out.println("[ -- Selecciona heuristica -- ]");
         System.out.println("[ 1 ] Manhattan");
-        System.out.println("[ 2 ] Mitjana");
+        System.out.println("[ 2 ] Obstacles");
         System.out.println("[ 3 ] Canvi carretera");
 
         int heur = sc.nextInt();
@@ -69,8 +69,8 @@ public class Main {
                 break;
 
             case 2:
-                h = new HeuristicaMitjana();
-                heuristicaNom = "Mitjana";
+                h = new HeuristicaObstacles();
+                heuristicaNom = "Obstacles";
                 break;
 
             case 3:

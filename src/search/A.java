@@ -25,7 +25,7 @@ public class A {
 
         Set<Estat> closed = new HashSet<>();
 
-        Node start = new Node(inici,null,0,heuristica.calcular(inici,objectiu));
+        Node start = new Node(inici,null,0,heuristica.calcular(inici, objectiu, mapa));
         open.add(start);
 
         int estatsTractats = 0;
@@ -57,7 +57,7 @@ public class A {
                 double cost = costCarretera(actual.estat.tipus,vei.tipus);
 
                 double g = actual.g + cost;
-                double h = heuristica.calcular(vei,objectiu);
+                double h = heuristica.calcular(vei, objectiu, mapa);
 
                 Node fill = new Node(vei,actual,g,h);
 

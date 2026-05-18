@@ -3,6 +3,5 @@ package heuristics;
 import model.*;
 
 public interface Heuristica {
-
-    double calcular(Estat actual, Estat finalEstat);
+    double calcular(Estat actual, Estat finalEstat, Mapa mapa);
 }
